@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Luxe Beauty | {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="{% url 'index' %}">Home</a>
+                <span class="breadcrumb-item active">{{ category.name }}</span>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="product_section_2 layout_padding">
+        <div class="row product-grid-row">
+            {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                {% include "partials/product_card.html" with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Luxe Beauty | Wishlist{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="{% url 'index' %}">Home</a>
+                <span class="breadcrumb-item active">Wishlist</span>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    {% if wishlist_items %}
+    <div class="product_section layout_padding">
+        <div class="container">
+            <div class="product_section_2 layout_padding">
+                <div class="row product-grid-row">
+                    {% for item in wishlist_items %}
+                    <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                        <div class="product_box dlx-product-card">
+                            {% if item.product.is_out_of_stock %}
+                            <div class="out-of-stock-overlay">
+                                <span class="out-of-stock-text">Sold Out</span>
+                            </div>
+                            {% endif %}
+
+                            <a href="{% url 'product_detail' item.product.id %}" class="product_image_link dlx-product-image-wrap">
+                                <img src="{{ item.product.image.url }}" class="image_1" alt="{{ item.product.product_name }}">
+                            </a>
+
+                            <div class="dlx-product-body">
+                                <a href="{% url 'product_detail' item.product.id %}" class="dlx-product-name-link">
+                                    <h3 class="bursh_text dlx-product-title">{{ item.product.product_name }}</h3>
+                                </a>
+
+                                <div class="price_wrap dlx-price-wrap">
+                                    {% if item.product.has_discount %}
+                                        <div class="dlx-price-main">UGX {{ item.product.discounted_price|intcomma }}</div>
+                                        <div class="old_price_row dlx-old-price-row">
+                                            <span class="old_price_text">UGX {{ item.product.old_price|intcomma }}</span>
+                                            <span class="discount_badge dlx-discount-badge">-{{ item.product.discount_percent_display }}%</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="dlx-price-main">UGX {{ item.product.price|intcomma }}</div>
+                                    {% endif %}
+                                </div>
+
+                                {% if not item.product.is_out_of_stock %}
+                                <div class="dlx-card-btn-wrap">
+                                    <div class="add-to-cart-btn">
+                                        <form action="{% url 'add_to_cart' item.product.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button data-product-id="{{ item.product.id }}" type="submit" class="custom-toast success-toast dlx-cart-btn">
+                                                Add to cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="dlx-card-btn-wrap">
+                                    <button type="button" class="dlx-cart-btn dlx-cart-btn-disabled" disabled>
+                                        Out of stock
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-products-wishlist text-center">
+        <div class="empty-wishlist-icon">
+            <i class="fa fa-heart-o" style="font-size: 100px; color: #d1d1d1;"></i>
+        </div>
+        <h2>Your wishlist is empty</h2>
+        <p class="lead">Looks like you haven't added any products to your wishlist yet.</p>
+        <a href="{% url 'index' %}" class="btn btn-primary mt-4">Explore Products</a>
+    </div>
+    <style>
+        .no-products-wishlist {
+            padding: 50px 0;
+        }
+        .no-products-wishlist h2 {
+            margin-top: 20px;
+            font-size: 28px;
+            color: #333;
+        }
+        .no-products-wishlist p {
+            margin-top: 10px;
+            color: #777;
+        }
+        .no-products-wishlist .btn-primary {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+    </style>
+    {% endif %}
+</div>
+
+{% endblock %}

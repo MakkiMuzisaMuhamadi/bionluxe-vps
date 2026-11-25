@@ -1,0 +1,56 @@
+{% load humanize %}
+
+<div class="product_box dlx-product-card">
+    {% if product.is_out_of_stock %}
+    <div class="out-of-stock-overlay">
+        <span class="out-of-stock-text">Sold Out</span>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'product_detail' product.id %}" class="product_image_link dlx-product-image-wrap">
+        <img src="{{ product.image.url }}" class="image_1" alt="{{ product.product_name }}">
+    </a>
+
+    <div class="dlx-product-body">
+        <a href="{% url 'product_detail' product.id %}" class="dlx-product-name-link">
+            <h3 class="bursh_text dlx-product-title">{{ product.product_name }}</h3>
+        </a>
+
+        <div class="price_wrap dlx-price-wrap">
+            {% if product.has_discount %}
+                <div class="dlx-price-main">UGX {{ product.discounted_price|intcomma }}</div>
+                <div class="old_price_row dlx-old-price-row">
+                    <span class="old_price_text">UGX {{ product.old_price|intcomma }}</span>
+                    <span class="discount_badge dlx-discount-badge">-{{ product.discount_percent_display }}%</span>
+                </div>
+            {% else %}
+                <div class="dlx-price-main">UGX {{ product.price|intcomma }}</div>
+            {% endif %}
+        </div>
+
+            {% if not product.is_out_of_stock %}
+            <div class="dlx-card-btn-wrap">
+                {% if product.colors.all %}
+                    <a href="{% url 'product_detail' product.id %}" class="custom-toast success-toast dlx-cart-btn">
+                        <i class="fa fa-palette mr-2"></i> Choose Color
+                    </a>
+                {% else %}
+                    <div class="add-to-cart-btn">
+                        <form action="{% url 'add_to_cart' product.id %}" method="post" class="ajax-add-to-cart-form">
+                            {% csrf_token %}
+                            <button data-product-id="{{ product.id }}" type="submit" class="custom-toast success-toast dlx-cart-btn">
+                                <i class="fa fa-shopping-bag mr-2"></i> Add to cart
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+{% else %}
+        <div class="dlx-card-btn-wrap">
+            <button type="button" class="dlx-cart-btn dlx-cart-btn-disabled" disabled>
+                Out of stock
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>

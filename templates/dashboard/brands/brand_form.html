@@ -1,0 +1,188 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}<style>
+  .direct-form-shell {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .direct-form-card {
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.06);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .direct-form-card .card-header {
+    background: #fff;
+    border-bottom: 1px solid #edf0f3;
+    padding: 18px 22px;
+  }
+
+  .direct-form-card .card-body {
+    padding: 22px;
+  }
+
+  .field-card {
+    background: #f8fafc;
+    border: 1px solid #edf0f3;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    font-weight: 600;
+    margin-bottom: .45rem;
+    color: #334155;
+    display: block;
+  }
+
+  .required-star {
+    color: #dc3545;
+    margin-left: 3px;
+    font-weight: 700;
+  }
+
+  .lux-input,
+  .lux-file {
+    width: 100%;
+    min-height: 48px;
+    border-radius: .95rem;
+    border: 1px solid #dbe4f0;
+    background: #fff;
+    padding: .72rem .95rem;
+    font-size: .95rem;
+    color: #334155;
+    outline: none;
+    box-shadow: none;
+    transition: all .2s ease;
+    display: block;
+  }
+
+  .lux-input:focus,
+  .lux-file:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 .18rem rgba(13, 110, 253, .12);
+  }
+
+  .field-errors {
+    margin-top: 8px;
+    font-size: .875rem;
+    color: #dc3545;
+  }
+
+  .field-errors ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .image-preview-wrap img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .text-muted-soft {
+    color: #6c757d;
+  }
+
+  .form-errors-box {
+    background: #fff5f5;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="direct-form-shell">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <div>
+      <h4 class="mb-1 font-weight-bold">{{ page_title }}</h4>
+      <p class="text-muted-soft mb-0">Manage brand details with a clean direct-template form.</p>
+    </div>
+    <a href="{% url 'admin_brands' %}" class="btn btn-light border mt-2 mt-md-0">
+      <i class="fas fa-arrow-left mr-2"></i>Back to Brands
+    </a>
+  </div>
+
+  <div class="direct-form-card card">
+    <div class="card-header">
+      <h5 class="mb-1">Brand Information</h5>
+      <small class="text-muted-soft">Add or update the brand name and image.</small>
+    </div>
+
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+          <div class="form-errors-box">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="field-card">
+          <label class="form-label" for="id_name">
+            Brand Name<span class="required-star">*</span>
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="id_name"
+            class="lux-input"
+            placeholder="Enter brand name"
+            value="{{ form.name.value|default_if_none:'' }}"
+          >
+          {% if form.name.errors %}
+            <div class="field-errors">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="field-card">
+          <label class="form-label" for="id_image">
+            Brand Image<span class="required-star">*</span>
+          </label>
+          <input
+            type="file"
+            name="image"
+            id="id_image"
+            class="lux-file"
+            accept="image/*"
+          >
+          {% if form.image.errors %}
+            <div class="field-errors">{{ form.image.errors }}</div>
+          {% endif %}
+        </div>
+
+        {% if form.instance.pk and form.instance.image %}
+          <div class="field-card">
+            <label class="form-label">Current Image</label>
+            <div class="image-preview-wrap">
+              <img src="{{ form.instance.image.url }}" alt="{{ form.instance.name }}">
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save mr-2"></i>{{ submit_text }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

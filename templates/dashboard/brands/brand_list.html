@@ -1,0 +1,66 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Brands{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-1 font-weight-bold">Brands</h4>
+    <p class="text-muted mb-0">Manage product brands for better catalog organization.</p>
+  </div>
+  <a href="{% url 'admin_add_brand' %}" class="btn btn-primary">
+    <i class="fas fa-plus-circle mr-2"></i>Add Brand
+  </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-body table-responsive">
+    <table class="table table-hover" id="brandTable">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Added</th>
+          <th style="width:140px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for brand in brands %}
+        <tr>
+          <td>
+            {% if brand.image %}
+              <img src="{{ brand.image.url }}" class="rounded" style="width:55px;height:55px;object-fit:cover;">
+            {% endif %}
+          </td>
+          <td class="font-weight-bold">{{ brand.name }}</td>
+          <td>{{ brand.added_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'admin_edit_brand' brand.id %}" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-edit"></i>
+            </a>
+            <form method="post" action="{% url 'admin_delete_brand' brand.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+   {%endfor%}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  $(function () {
+    $("#brandTable").DataTable({
+      responsive: true
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}BionLuxe | Luxury Beauty, Cosmetics & Pharmacy{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div class="bion-message-wrapper">
+    {% for message in messages %}
+    <div class="bion-message-card bion-message-{{ message.tags }}">
+        <div class="bion-message-icon">
+            {% if message.tags == "success" %}
+                <i class="fa-solid fa-circle-check"></i>
+            {% elif message.tags == "error" %}
+                <i class="fa-solid fa-circle-xmark"></i>
+            {% elif message.tags == "warning" %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+            {% endif %}
+        </div>
+
+        <div class="bion-message-content">
+            <strong>
+                {% if message.tags == "success" %}
+                    Order Received
+                {% elif message.tags == "error" %}
+                    Action Failed
+                {% elif message.tags == "warning" %}
+                    Please Check
+                {% else %}
+                    Notice
+                {% endif %}
+            </strong>
+            <span>{{ message }}</span>
+        </div>
+
+        <button type="button" class="bion-message-close" onclick="this.closest('.bion-message-card').remove();">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="hero-slider-section">
+    <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+        {% if banners %}
+        <ol class="carousel-indicators">
+            {% for banner in banners %}
+            <li data-target="#carouselExampleIndicators"
+                data-slide-to="{{ forloop.counter0 }}"
+                class="{% if forloop.first %}active{% endif %}">
+            </li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+
+        <div class="carousel-inner">
+            {% for banner in banners %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="hero-slide" style="background-image: url('{{ banner.image.url }}');">
+                    <div class="hero-overlay"></div>
+                    <div class="container">
+                        <div class="hero-content">
+                            <span class="hero-badge">Luxury Beauty • Cosmetics • Pharmacy</span>
+                            <h1>{{ banner.title }}</h1>
+                            <p>{{ banner.description }}</p>
+                            <div class="hero-actions">
+                                <a href="{% url 'search' %}" class="hero-btn primary-btn">Shop Collection</a>
+                                {% if categories %}
+                                <a href="{% url 'category_products' categories.0.id %}" class="hero-btn secondary-btn">Explore Categories</a>
+                                {% else %}
+                                <a href="{% url 'search' %}" class="hero-btn secondary-btn">Explore More</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="hero-nav-btn"><i class="fa fa-angle-left"></i></span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="hero-nav-btn"><i class="fa fa-angle-right"></i></span>
+        </a>
+    </div>
+</div>
+
+<div class="product_section">
+    <div class="container">
+
+        {% if newproducts %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Just Arrived</span>
+                <h2 class="home-section-head__title">New Arrivals</h2>
+                <p class="home-section-head__text">
+                    Freshly added beauty, skincare and wellness picks for your collection.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'newproducts' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in newproducts %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if topsales %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Most Loved</span>
+                <h2 class="home-section-head__title">Top Sales</h2>
+                <p class="home-section-head__text">
+                    Best-selling customer favorites chosen again and again.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'topsales' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in topsales %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if trending %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Popular Right Now</span>
+                <h2 class="home-section-head__title">Trending Products</h2>
+                <p class="home-section-head__text">
+                    What shoppers are currently loving across beauty and skincare.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'trending' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in trending %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if dryskinproducts %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Skin Support</span>
+                <h2 class="home-section-head__title">Dry Skin Essentials</h2>
+                <p class="home-section-head__text">
+                    Hydrating formulas selected to nourish and comfort dry skin.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'dryskinproducts' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in dryskinproducts %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if oilyskin %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Balanced Care</span>
+                <h2 class="home-section-head__title">Oily Skin Solutions</h2>
+                <p class="home-section-head__text">
+                    Lightweight and balancing picks made for oily skin routines.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'oilyskin' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in oilyskin %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if acneprone %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Clear Skin</span>
+                <h2 class="home-section-head__title">Acne Prone Care</h2>
+                <p class="home-section-head__text">
+                    Gentle and targeted products designed for acne-prone skin needs.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'acneprone' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in acneprone %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if brightening %}
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Glow Ritual</span>
+                <h2 class="home-section-head__title">Brightening Picks</h2>
+                <p class="home-section-head__text">
+                    Radiance-boosting products for a luminous and even-looking finish.
+                </p>
+            </div>
+            <a href="{% url 'product_section_list' 'brightening' %}" class="view-all-btn">View All</a>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in brightening %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<section class="brands-section-wrap">
+    <div class="brands-shell">
+        <div class="collection-strip brands-strip">
+            <div class="luxury-section-head">
+                <span class="luxury-mini">Trusted Names</span>
+                <h2 class="luxury-title">Top Brands</h2>
+            </div>
+
+            <div class="row brands-row">
+                {% for brand in brands %}
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    <div class="category-or-brand-card brand-card">
+                        <a href="{% url 'brand_products' brand.id %}" class="thumb">
+                            <img src="{{ brand.image.url }}" alt="{{ brand.name }}">
+                        </a>
+                        <a href="{% url 'brand_products' brand.id %}" class="name">{{ brand.name }}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mb-5">
+    <div class="luxury-section-head">
+        <span class="luxury-mini">Shop By Need</span>
+        <h2 class="luxury-title">Top Categories</h2>
+    </div>
+
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-4 col-sm-4 col-lg-2">
+            <div class="category-or-brand-card">
+                <a href="{% url 'category_products' category.id %}" class="thumb">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                </a>
+                <a href="{% url 'category_products' category.id %}" class="name">{{ category.name }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+        document.querySelectorAll(".bion-message-card").forEach(function (alert) {
+            alert.style.opacity = "0";
+            alert.style.transform = "translateX(24px)";
+            alert.style.transition = "0.3s ease";
+
+            setTimeout(function () {
+                alert.remove();
+            }, 300);
+        });
+    }, 5000);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ brand.name }} | BionLuxe{% endblock %}
+
+{% block content %}
+
+
+<div class="product_section">
+    <div class="container py-2">
+
+        <div class="home-section-head">
+            <div class="home-section-head__content">
+                <span class="home-section-head__badge">Brand Collection</span>
+                <h2 class="home-section-head__title">{{ brand.name }}</h2>
+                <p class="home-section-head__text">
+                    Explore products from {{ brand.name }}.
+                </p>
+            </div>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for product in products %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if not products %}
+            <div class="alert alert-light border mt-3">
+                No products found for this brand yet.
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

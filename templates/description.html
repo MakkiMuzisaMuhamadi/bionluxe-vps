@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ product.product_name }} | BionLuxe{% endblock %}
+
+{% block content %}
+
+<div class="lux-product-page">
+
+    <div class="container lux-product-section">
+        <div class="row align-items-start">
+            <div class="col-lg-6 mb-4">
+                <div class="lux-gallery-card">
+                    {% if product.is_out_of_stock %}
+                    <div class="out-of-stock-overlay">
+                        <span class="out-of-stock-text">OUT OF STOCK</span>
+                    </div>
+                    {% endif %}
+
+                    <div id="product-carousel" class="carousel slide lux-product-carousel" data-ride="carousel" data-interval="false">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="lux-main-image-wrap">
+                                    <img class="lux-main-image" src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                                </div>
+                            </div>
+
+                            {% for image in product_images %}
+                            <div class="carousel-item">
+                                <div class="lux-main-image-wrap">
+                                    <img class="lux-main-image" src="{{ image.image.url }}" alt="{{ product.product_name }}">
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <a class="carousel-control-prev lux-carousel-control" href="#product-carousel" role="button" data-slide="prev">
+                            <span><i class="fa-solid fa-angle-left"></i></span>
+                        </a>
+                        <a class="carousel-control-next lux-carousel-control" href="#product-carousel" role="button" data-slide="next">
+                            <span><i class="fa-solid fa-angle-right"></i></span>
+                        </a>
+                    </div>
+
+                    <div class="lux-thumbnails">
+                        <div class="lux-thumb-item active-thumb" data-target="#product-carousel" data-slide-to="0">
+                            <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                        </div>
+
+                        {% for image in product_images %}
+                        <div class="lux-thumb-item" data-target="#product-carousel" data-slide-to="{{ forloop.counter }}">
+                            <img src="{{ image.image.url }}" alt="{{ product.product_name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="lux-product-info-card">
+                    <div class="lux-mini-label">Luxury Beauty • Cosmetics • Pharmacy</div>
+
+                    <h1 class="lux-product-title">{{ product.product_name }}</h1>
+
+                    {% if product.colors.all %}
+                    <div class="lux-colors-wrap">
+                        <span class="lux-colors-label">Choose Color(s):</span>
+
+                        <div class="lux-color-choice-list">
+                            {% for color in product.colors.all %}
+                            <label class="lux-color-choice">
+                                <input
+                                    type="checkbox"
+                                    name="selected_colors_display"
+                                    value="{{ color.color_hex }}"
+                                >
+                                <span
+                                    class="lux-color-circle"
+                                    style="background-color: {{ color.color_hex }};"
+                                    title="{{ color.color_hex }}"
+                                ></span>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <small class="text-muted d-block mt-2">
+                            You can select one or more colors.
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    {% if product.topsales or product.trending or product.dryskinproducts or product.oilyskin or product.acneprone or product.brightening or product.antiaging or product.sunscreen or product.lightening %}
+                    <div class="lux-product-tags">
+                        {% if product.topsales %}
+                            <span>Top Sales</span>
+                        {% endif %}
+                        {% if product.trending %}
+                            <span>Trending</span>
+                        {% endif %}
+                        {% if product.dryskinproducts %}
+                            <span>Dry Skin</span>
+                        {% endif %}
+                        {% if product.oilyskin %}
+                            <span>Oily Skin</span>
+                        {% endif %}
+                        {% if product.acneprone %}
+                            <span>Acne Prone</span>
+                        {% endif %}
+                        {% if product.brightening %}
+                            <span>Brightening</span>
+                        {% endif %}
+                        {% if product.antiaging %}
+                            <span>Anti-aging</span>
+                        {% endif %}
+                        {% if product.sunscreen %}
+                            <span>SunScreen</span>
+                        {% endif %}
+                        {% if product.lightening %}
+                            <span>Lightening</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="lux-meta-row">
+                        <span class="lux-meta-pill">{{ product.category.name }}</span>
+                        <span class="lux-meta-pill">{{ product.brand.name }}</span>
+                    </div>
+
+                    <div class="lux-rating-row">
+                        <div class="lux-rating-stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                        <span class="lux-rating-text">Premium selection</span>
+                    </div>
+
+                    {% if product.is_out_of_stock %}
+                    <div class="alert alert-warning mt-3 mb-4">
+                        <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                        This product is currently out of stock.
+                    </div>
+                    {% endif %}
+
+                    <div class="lux-price-box">
+                        <div class="lux-price-label">Price</div>
+
+                        {% if product.has_discount %}
+                            <div class="lux-price-value">UGX {{ product.discounted_price|intcomma }}</div>
+                            <div class="lux-old-price">UGX {{ product.old_price|intcomma }}</div>
+                            <div class="lux-discount-row">
+                                <span class="lux-discount-badge">-{{ product.discount_percent_display }}%</span>
+                                <span class="lux-save-text">You save UGX {{ product.amount_saved|intcomma }}</span>
+                            </div>
+                        {% else %}
+                            <div class="lux-price-value">UGX {{ product.price|intcomma }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="lux-desc-box">
+                        <h5>Product Details</h5>
+                        <p>{{ product.description }}</p>
+                    </div>
+
+                    <div class="lux-action-row">
+                        {% if not product.is_out_of_stock %}
+                        <form action="{% url 'add_to_cart' product.id %}" method="post" class="lux-action-form ajax-add-to-cart-form" id="detailAddToCartForm">
+                            {% csrf_token %}
+
+                            <div id="cartSelectedColorsHolder"></div>
+
+                            <button data-product-id="{{ product.id }}" type="submit" class="lux-btn lux-btn-gold">
+                                <i class="fa-solid fa-cart-shopping mr-2"></i> Add To Cart
+                            </button>
+                        </form>
+
+                        <button class="lux-btn lux-btn-dark" data-toggle="modal" data-target="#buyModal">
+                            Buy Now
+                        </button>
+                        {% else %}
+                        <button class="lux-btn lux-btn-muted disabled-btn">
+                            <i class="fa-solid fa-cart-shopping mr-2"></i> Out of Stock
+                        </button>
+                        <button class="lux-btn lux-btn-muted disabled-btn">
+                            Buy Now
+                        </button>
+                        {% endif %}
+
+                        <a href="tel:+256789401436" class="lux-btn lux-btn-outline">
+                            <i class="fa-solid fa-phone mr-2"></i> Call Us
+                        </a>
+                    </div>
+
+                    <div class="lux-share-row">
+                        <strong>Share:</strong>
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fa-brands fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="buyModal" tabindex="-1" role="dialog" aria-labelledby="buyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content lux-modal-content">
+                <div class="modal-header lux-modal-header">
+                    <h5 class="modal-title" id="buyModalLabel">Enter Details For Delivery</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body lux-modal-body">
+                    <form id="buyForm" action="{% url 'buy_now' %}" method="post">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control lux-input" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="tel" class="form-control lux-input" id="phoneNumber" name="phone_number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productName">Product Name</label>
+                            <input type="text" class="form-control lux-input" id="productName" value="{{ product.product_name }}" name="product_name" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productPrice">Product Price</label>
+                            <input type="text" class="form-control lux-input" id="productPrice"
+                                   value="{% if product.has_discount %}{{ product.discounted_price }}{% else %}{{ product.price }}{% endif %}"
+                                   name="product_price" readonly>
+                        </div>
+
+                        <div class="form-group d-none">
+                            <label for="productID">Product ID</label>
+                            <input type="text" class="form-control lux-input" id="productID" value="{{ product.id }}" name="product_id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCategory">Product Category</label>
+                            <input type="text" class="form-control lux-input" id="productCategory" value="{{ product.category }}" name="product_category" readonly>
+                        </div>
+
+                        {% if product.colors.all %}
+                        <div class="form-group" id="buyNowColorSection">
+                            <label>
+                                Choose Color(s) <span class="text-danger">*</span>
+                            </label>
+
+                            <div class="lux-color-choice-list buy-now-color-list">
+                                {% for color in product.colors.all %}
+                                <label class="lux-color-choice">
+                                    <input
+                                        type="checkbox"
+                                        name="selected_colors_modal"
+                                        value="{{ color.color_hex }}"
+                                    >
+                                    <span
+                                        class="lux-color-circle"
+                                        style="background-color: {{ color.color_hex }};"
+                                        title="{{ color.color_hex }}"
+                                    ></span>
+                                </label>
+                                {% endfor %}
+                            </div>
+
+                            <small class="text-muted d-block mt-2">
+                                You can select one or more colors for this order.
+                            </small>
+
+                            <div id="buyNowColorError" style="display: none;">
+                                <div style="
+                                    margin-top: 10px;
+                                    padding: 10px 12px;
+                                    border-radius: 12px;
+                                    background: #fff3cd;
+                                    border: 1px solid #ffeeba;
+                                    color: #856404;
+                                    font-size: 13px;
+                                    font-weight: 600;
+                                ">
+                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                                    Please choose at least one color before sending your order.
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div id="buySelectedColorsHolder"></div>
+
+                        <div class="modal-footer px-0 pb-0 border-0">
+                            <button type="button" class="lux-btn lux-btn-outline" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="lux-btn lux-btn-gold">Buy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        {% if similar_products %}
+        <div class="luxury-section-head mb-4">
+            <span class="luxury-mini">More To Explore</span>
+            <h2 class="luxury-title">You May Also Like</h2>
+        </div>
+
+        <div class="product_section_2">
+            <div class="row product-grid-row">
+                {% for item in similar_products %}
+                <div class="col-6 col-md-4 col-lg-3 product-grid-col">
+                    {% include "partials/product_card.html" with product=item %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const thumbs = document.querySelectorAll('.lux-thumb-item');
+
+    thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', function () {
+            thumbs.forEach(t => t.classList.remove('active-thumb'));
+            this.classList.add('active-thumb');
+        });
+    });
+
+    if (window.jQuery) {
+        jQuery('#product-carousel').on('slid.bs.carousel', function (e) {
+            const activeIndex = e.to;
+            thumbs.forEach(t => t.classList.remove('active-thumb'));
+            if (thumbs[activeIndex]) {
+                thumbs[activeIndex].classList.add('active-thumb');
+            }
+        });
+    }
+
+    const mainColorCheckboxes = document.querySelectorAll('input[name="selected_colors_display"]');
+    const modalColorCheckboxes = document.querySelectorAll('input[name="selected_colors_modal"]');
+
+    const cartHolder = document.getElementById("cartSelectedColorsHolder");
+    const buyHolder = document.getElementById("buySelectedColorsHolder");
+    const buyForm = document.getElementById("buyForm");
+    const buyNowColorError = document.getElementById("buyNowColorError");
+
+    function buildHiddenInputs(holder, colors) {
+        if (!holder) return;
+
+        holder.innerHTML = "";
+
+        colors.forEach(function (color) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "selected_colors";
+            input.value = color;
+            holder.appendChild(input);
+        });
+    }
+
+    function getCheckedValues(inputs) {
+        return Array.from(inputs)
+            .filter(input => input.checked)
+            .map(input => input.value);
+    }
+
+    function syncCartColors() {
+        const colors = getCheckedValues(mainColorCheckboxes);
+        buildHiddenInputs(cartHolder, colors);
+    }
+
+    function syncBuyColors() {
+        const colors = getCheckedValues(modalColorCheckboxes);
+        buildHiddenInputs(buyHolder, colors);
+    }
+
+    function showBuyNowColorError() {
+        if (buyNowColorError) {
+            buyNowColorError.style.display = "block";
+            buyNowColorError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    function clearBuyNowColorError() {
+        if (buyNowColorError) {
+            buyNowColorError.style.display = "none";
+        }
+    }
+
+    mainColorCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", syncCartColors);
+    });
+
+    modalColorCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+            syncBuyColors();
+
+            const selectedModalColors = getCheckedValues(modalColorCheckboxes);
+            if (selectedModalColors.length > 0) {
+                clearBuyNowColorError();
+            }
+        });
+    });
+
+    if (buyForm) {
+        buyForm.addEventListener("submit", function (e) {
+            const productHasColors = modalColorCheckboxes.length > 0;
+            const selectedModalColors = getCheckedValues(modalColorCheckboxes);
+
+            if (productHasColors && selectedModalColors.length === 0) {
+                e.preventDefault();
+                showBuyNowColorError();
+                return false;
+            }
+
+            syncBuyColors();
+        });
+    }
+
+    syncCartColors();
+    syncBuyColors();
+});
+</script>
+
+{% endblock %}

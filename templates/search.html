@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search | BionLuxe{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+    <div class="home-section-head mb-4">
+        <div class="home-section-head__content">
+            <span class="home-section-head__badge">Smart Search</span>
+            <h2 class="home-section-head__title">Find Your Perfect Product</h2>
+            <p class="home-section-head__text">
+                Search by product name, brand, category, skincare concern, or any keyword.
+            </p>
+        </div>
+    </div>
+
+    <div class="search-hero-box">
+        <form action="{% url 'product_search' %}" method="get" class="modern-search-form">
+            <div class="modern-search-input-wrap">
+                <i class="fa fa-search modern-search-icon"></i>
+                <input
+                    type="text"
+                    name="q"
+                    class="modern-search-input"
+                    placeholder="Search products, brands, categories, skin concerns..."
+                    autocomplete="off"
+                    required
+                >
+                <button class="modern-search-btn" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    {% if popular_searches %}
+    <div class="mt-4">
+        <h5 class="mb-3">Popular Searches</h5>
+        <div class="search-chip-wrap">
+            {% for item in popular_searches %}
+            <a href="{% url 'product_search' %}?q={{ item }}" class="search-chip">{{ item }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.search-hero-box {
+    background: linear-gradient(135deg, #fffaf3, #f8efe3);
+    border: 1px solid #eadcc8;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+}
+
+.modern-search-form {
+    margin: 0;
+}
+
+.modern-search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e3d6c2;
+    border-radius: 999px;
+    overflow: hidden;
+    min-height: 62px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+.modern-search-icon {
+    position: absolute;
+    left: 22px;
+    color: #9a8565;
+    font-size: 16px;
+}
+
+.modern-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 20px 0 54px;
+    height: 62px;
+    font-size: 15px;
+    background: transparent;
+}
+
+.modern-search-btn {
+    border: none;
+    height: 50px;
+    margin-right: 6px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-weight: 700;
+}
+
+.modern-search-btn:hover {
+    background: #c6a46a;
+    color: #111;
+}
+
+.search-chip-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.search-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 15px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid #e3d6c2;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.search-chip:hover {
+    background: #f8efe3;
+    color: #111;
+}
+
+@media (max-width: 576px) {
+    .search-hero-box {
+        padding: 18px;
+    }
+
+    .modern-search-input-wrap {
+        min-height: 54px;
+    }
+
+    .modern-search-input {
+        height: 54px;
+        font-size: 14px;
+        padding-left: 48px;
+    }
+
+    .modern-search-btn {
+        height: 42px;
+        padding: 0 16px;
+        font-size: 13px;
+    }
+
+    .modern-search-icon {
+        left: 18px;
+        font-size: 14px;
+    }
+}
+</style>
+
+{% endblock %}

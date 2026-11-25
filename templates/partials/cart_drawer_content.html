@@ -1,0 +1,107 @@
+{% load humanize %}
+
+<div class="cart-drawer-header">
+    <div>
+        <h4>Your Cart</h4>
+        <small>{{ cart_count }} item{{ cart_count|pluralize }}</small>
+    </div>
+    <button type="button" class="cart-drawer-close" id="cartDrawerCloseBtn">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+</div>
+
+<div class="cart-drawer-body">
+    {% if cart_items %}
+        <div class="cart-drawer-items">
+            {% for item in cart_items %}
+            <div class="cart-drawer-item">
+                <a href="{% url 'product_detail' item.product.id %}" class="cart-drawer-item-image">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}">
+                </a>
+
+                <div class="cart-drawer-item-info">
+                    <a href="{% url 'product_detail' item.product.id %}" class="cart-drawer-item-name">
+                        {{ item.product.product_name }}
+                    </a>
+
+                    {% if item.selected_color_list %}
+                    <div class="cart-selected-color">
+                        <span>Colors:</span>
+                        {% for color in item.selected_color_list %}
+                            <i style="background-color: {{ color }};" title="{{ color }}"></i>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="cart-drawer-item-price">
+                        <strong>UGX {{ item.unit_price|intcomma }}</strong>
+                        {% if item.product.has_discount %}
+                        <span class="cart-drawer-item-old-price">UGX {{ item.old_unit_price|intcomma }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-drawer-item-actions">
+                        <form method="post" action="{% url 'update_cart_item' item.id %}" class="ajax-cart-action-form qty-form-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="cart_action" value="decrease">
+                            <button type="submit" class="qty-btn" aria-label="Decrease quantity">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </form>
+
+                        <span class="qty-value">{{ item.quantity }}</span>
+
+                        <form method="post" action="{% url 'update_cart_item' item.id %}" class="ajax-cart-action-form qty-form-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="cart_action" value="increase">
+                            <button type="submit" class="qty-btn" aria-label="Increase quantity">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </form>
+
+                        <form method="post" action="{% url 'delete_item' item.id %}" class="ajax-cart-action-form remove-form-inline ml-2">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-btn" title="Remove item" aria-label="Remove item">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="cart-drawer-line-total">
+                    UGX {{ item.total_price|intcomma }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="cart-drawer-empty">
+            <div class="cart-drawer-empty-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <h5>Your cart is empty</h5>
+            <p>Add products and they will appear here.</p>
+            <a href="{% url 'index' %}" class="drawer-shop-btn">Continue shopping</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="cart-drawer-footer">
+    <div class="cart-drawer-summary">
+        <div class="cart-drawer-summary-row">
+            <span>Subtotal</span>
+            <strong>UGX {{ subtotal|intcomma }}</strong>
+        </div>
+        <div class="cart-drawer-summary-row total-row">
+            <span>Total</span>
+            <strong>UGX {{ total_price|intcomma }}</strong>
+        </div>
+    </div>
+
+    <div class="cart-drawer-footer-actions">
+        <a href="{% url 'cart' %}" class="drawer-view-cart-btn">View Cart</a>
+        <a href="{% url 'checkout' %}" class="drawer-checkout-btn {% if not cart_items %}disabled-link{% endif %}">
+            Checkout
+        </a>
+    </div>
+</div>
